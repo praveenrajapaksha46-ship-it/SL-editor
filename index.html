@@ -1,174 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Super Market App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #000, #1a1a1a);
-            color: #fff;
-            text-align: center;
-        }
-
-        h1 {
-            color: #4CAF50;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: auto;
-        }
-
-        input {
-            padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            border: none;
-            width: 40%;
-        }
-
-        button {
-            background: #4CAF50;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        .item {
-            background: #222;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .delete-all {
-            background: red;
-        }
-
-        .total-box {
-            background: #111;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 8px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo & Video Editor</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>Photo & Video Editor</h1>
 
-    <h1>🛒 Market List</h1>
-
-    <div class="container">
-        <input type="text" id="item" placeholder="Item name">
-        <input type="number" id="price" placeholder="Price">
-        <input type="number" id="qty" placeholder="Qty" value="1">
-        <br>
-        <button onclick="addItem()">Add</button>
-        <button class="delete-all" onclick="clearAll()">Clear All</button>
-        <button onclick="shareWhatsApp()">Share WhatsApp</button>
-        <div id="list"></div>
-
-        <div class="total-box">
-            <h3>Total: LKR <span id="total">0.00</span></h3>
-        </div>
+  <div class="editor">
+    <input type="file" id="fileInput" accept="image/*,video/*">
+    <div id="previewContainer">
+      <img id="photoPreview" style="display:none;" />
+      <video id="videoPreview" controls style="display:none;"></video>
     </div>
 
-<script>
-let items = JSON.parse(localStorage.getItem("marketItems")) || [];
+    <!-- Photo Controls -->
+    <div id="photoControls" style="display:none;">
+      <button onclick="rotatePhoto()">Rotate</button>
+      <button onclick="applyFilter()">Filter</button>
+      <input type="range" id="brightness" min="0" max="200" value="100" onchange="adjustBrightness()">
+    </div>
 
-function saveData() {
-    localStorage.setItem("marketItems", JSON.stringify(items));
-}
+    <!-- Video Controls -->
+    <div id="videoControls" style="display:none;">
+      <button onclick="trimVideo()">Trim</button>
+      <button onclick="changeSpeed()">Speed</button>
+    </div>
 
-function addItem() {
-    let name = document.getElementById("item").value;
-    let price = parseFloat(document.getElementById("price").value);
-    let qty = parseInt(document.getElementById("qty").value);
+    <button onclick="downloadFile()">Download</button>
+  </div>
 
-    if (name && price && qty) {
-        items.push({name, price, qty});
-        saveData();
-        displayItems();
-        clearInputs();
-    }
-}
-
-function displayItems() {
-    let list = document.getElementById("list");
-    let total = 0;
-    list.innerHTML = "";
-
-    items.forEach((item, index) => {
-        let itemTotal = item.price * item.qty;
-        total += itemTotal;
-
-        list.innerHTML += `
-            <div class="item">
-                <div>
-                    <b>${item.name}</b><br>
-                    LKR ${item.price} × ${item.qty}
-                </div>
-                <div>
-                    LKR ${itemTotal.toFixed(2)}
-                    <button onclick="removeItem(${index})">❌</button>
-                </div>
-            </div>
-        `;
-    });
-
-    document.getElementById("total").innerText = total.toFixed(2);
-}
-
-function removeItem(index) {
-    items.splice(index, 1);
-    saveData();
-    displayItems();
-}
-
-function clearAll() {
-    items = [];
-    saveData();
-    displayItems();
-}
-
-function clearInputs() {
-    document.getElementById("item").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("qty").value = "1";
-}
-
-displayItems();
-function shareWhatsApp() {
-    if (items.length === 0) {
-        alert("List is empty!");
-        return;
-    }
-
-    let message = "🛒 My Market List\n\n";
-    let total = 0;
-
-    items.forEach(item => {
-        let itemTotal = item.price * item.qty;
-        total += itemTotal;
-        message += `${item.name} - ${item.qty} x ${item.price} = LKR ${itemTotal}\n`;
-    });
-
-    message += `\nTotal: LKR ${total.toFixed(2)}`;
-
-    let url = "https://wa.me/?text=" + encodeURIComponent(message);
-    window.open(url, "_blank");
-}
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
